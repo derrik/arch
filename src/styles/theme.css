@@ -1,0 +1,86 @@
+:root,
+[data-theme='dark'] {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --bg-surface: #1a1a2e;
+  --bg-elevated: #22223a;
+  --bg-glass: rgba(26, 26, 46, 0.85);
+
+  --text-primary: #e8e6f0;
+  --text-secondary: #a8a4b8;
+  --text-muted: #6b6780;
+
+  --accent-purple: #a855f7;
+  --accent-cyan: #06b6d4;
+  --accent-pink: #ec4899;
+  --accent-green: #22c55e;
+
+  --border-default: #2a2a40;
+  --border-active: #a855f7;
+
+  --node-bg: #1e1e32;
+  --node-border: #2e2e48;
+  --node-border-selected: #a855f7;
+  --node-border-highlighted: #06b6d4;
+  --node-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --node-shadow-selected: 0 0 20px rgba(168, 85, 247, 0.3);
+  --node-shadow-highlighted: 0 0 16px rgba(6, 182, 212, 0.25);
+
+  --edge-sync: #a8a4b8;
+  --edge-async: #22c55e;
+
+  --grid-line: rgba(168, 85, 247, 0.06);
+  --grid-line-major: rgba(168, 85, 247, 0.12);
+
+  --handle-bg: #a855f7;
+  --handle-border: #1a1a2e;
+
+  --toolbar-bg: var(--bg-glass);
+  --sidebar-bg: var(--bg-secondary);
+
+  --danger: #ef4444;
+  --danger-hover: #dc2626;
+}
+
+[data-theme='light'] {
+  --bg-primary: #f5f3ff;
+  --bg-secondary: #ede9fe;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f0ecff;
+  --bg-glass: rgba(255, 255, 255, 0.85);
+
+  --text-primary: #1e1b2e;
+  --text-secondary: #5b5675;
+  --text-muted: #9590a8;
+
+  --accent-purple: #7c3aed;
+  --accent-cyan: #0891b2;
+  --accent-pink: #db2777;
+  --accent-green: #16a34a;
+
+  --border-default: #ddd6fe;
+  --border-active: #7c3aed;
+
+  --node-bg: #ffffff;
+  --node-border: #ddd6fe;
+  --node-border-selected: #7c3aed;
+  --node-border-highlighted: #0891b2;
+  --node-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --node-shadow-selected: 0 0 20px rgba(124, 58, 237, 0.2);
+  --node-shadow-highlighted: 0 0 16px rgba(8, 145, 178, 0.15);
+
+  --edge-sync: #7c7495;
+  --edge-async: #16a34a;
+
+  --grid-line: rgba(124, 58, 237, 0.06);
+  --grid-line-major: rgba(124, 58, 237, 0.12);
+
+  --handle-bg: #7c3aed;
+  --handle-border: #ffffff;
+
+  --toolbar-bg: var(--bg-glass);
+  --sidebar-bg: var(--bg-secondary);
+
+  --danger: #dc2626;
+  --danger-hover: #b91c1c;
+}
