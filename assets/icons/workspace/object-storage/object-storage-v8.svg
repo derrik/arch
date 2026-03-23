@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- description: A taller, narrower cylinder with three circles arranged vertically, representing objects stacked in a deep storage container — more compact and minimal -->
+  <ellipse cx="12" cy="4" rx="7" ry="2.5"/>
+  <path d="M5 4v16c0 1.38 3.13 2.5 7 2.5s7-1.12 7-2.5V4"/>
+  <circle cx="12" cy="10" r="1.5"/>
+  <circle cx="12" cy="14.5" r="1.5"/>
+  <circle cx="12" cy="19" r="1.5"/>
+</svg>

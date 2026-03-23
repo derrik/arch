@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   ReactFlow,
   type Node,
@@ -13,6 +13,7 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
+import { NodeKind } from '@/types/node-types';
 import type { CanvasAdapterProps } from '../CanvasAdapter.types';
 import { ArchNodeComponent, type ArchNodeData } from './ArchNode';
 import { ArchEdgeComponent, type ArchEdgeData } from './ArchEdge';
@@ -51,11 +52,20 @@ export function ReactFlowCanvas({
   onGroupResize,
   onNoteMoveOrUpdate,
   onPaneClickWithTool,
+  customStampId,
 }: CanvasAdapterProps) {
   const rfRef = useRef<ReactFlowInstance | null>(null);
   const skipNextSelectionRef = useRef(false);
   const highlightSet = useMemo(() => new Set(highlightedNodeIds), [highlightedNodeIds]);
   const selectedSet = useMemo(() => new Set(selectedNodeIds), [selectedNodeIds]);
+
+  useEffect(() => {
+    const handler = () => {
+      rfRef.current?.fitView({ padding: 0.15, duration: 300 });
+    };
+    window.addEventListener('arch:fitView', handler);
+    return () => window.removeEventListener('arch:fitView', handler);
+  }, []);
 
   const rfNodes: Node[] = useMemo(() => {
     const groupNodes: Node[] = (groups ?? []).map((g) => ({
@@ -82,6 +92,7 @@ export function ReactFlowCanvas({
         kind: n.kind,
         label: n.label,
         highlighted: highlightSet.has(n.id),
+        customIconId: n.customIconId,
         onLabelChange: onNodeLabelChange,
       } satisfies ArchNodeData,
     }));
@@ -232,7 +243,7 @@ export function ReactFlowCanvas({
     [onReconnect]
   );
 
-  const isPlacementMode = !!toolMode;
+  const isPlacementMode = !!toolMode || !!stampMode || !!customStampId;
 
   const handlePaneClick = useCallback(
     (event: React.MouseEvent) => {
@@ -242,13 +253,13 @@ export function ReactFlowCanvas({
         y: event.clientY,
       });
 
-      if (stampMode) {
-        onAddNode(stampMode, position.x, position.y);
+      if (stampMode || customStampId) {
+        onAddNode(stampMode ?? NodeKind.Generic, position.x, position.y);
       } else if (toolMode) {
         onPaneClickWithTool(toolMode, position.x, position.y);
       }
     },
-    [stampMode, toolMode, onAddNode, onPaneClickWithTool]
+    [stampMode, customStampId, toolMode, onAddNode, onPaneClickWithTool]
   );
 
   return (

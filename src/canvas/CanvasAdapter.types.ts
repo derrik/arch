@@ -14,6 +14,7 @@ export interface CanvasAdapterProps {
   toolMode: ToolMode;
   stampMode: NodeKind | null;
   isConnecting: boolean;
+  customStampId: string | null;
   onNodeMove: (id: string, x: number, y: number) => void;
   onNodeLabelChange: (id: string, label: string) => void;
   onAddNode: (kind: NodeKind, x: number, y: number) => void;

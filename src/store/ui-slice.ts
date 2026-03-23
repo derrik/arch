@@ -2,19 +2,24 @@ import { StateCreator } from 'zustand';
 import { NodeKind } from '@/types/node-types';
 
 export type ToolMode = { type: 'stamp'; kind: NodeKind } | { type: 'group' } | { type: 'note' } | null;
-export type ModalType = 'share' | 'delete-confirm' | 'import' | null;
+export type ModalType = 'share' | 'delete-confirm' | 'import' | 'ai-prompt' | null;
+export type ActiveView = 'design' | 'icon-studio';
 
 export interface UISlice {
+  activeView: ActiveView;
   toolMode: ToolMode;
   stampMode: NodeKind | null; // kept for backward compat
+  customStampId: string | null;
   selectedNodeIds: string[];
   selectedEdgeIds: string[];
   highlightedNodeIds: string[];
   isConnecting: boolean;
   activeModal: ModalType;
   deleteTargetId: string | null;
+  setActiveView: (view: ActiveView) => void;
   setToolMode: (mode: ToolMode) => void;
   setStampMode: (mode: NodeKind | null) => void;
+  setCustomStampId: (id: string | null) => void;
   setSelection: (nodeIds: string[], edgeIds: string[]) => void;
   clearSelection: () => void;
   setHighlightedNodeIds: (ids: string[]) => void;
@@ -32,8 +37,10 @@ function arraysEqual(a: string[], b: string[]): boolean {
 }
 
 export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set, get) => ({
+  activeView: (sessionStorage.getItem('arch-active-view') as ActiveView) ?? 'design',
   toolMode: null,
   stampMode: null,
+  customStampId: null,
   selectedNodeIds: [],
   selectedEdgeIds: [],
   highlightedNodeIds: [],
@@ -41,14 +48,27 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set, get) 
   activeModal: null,
   deleteTargetId: null,
 
+  setActiveView: (view) => {
+    sessionStorage.setItem('arch-active-view', view);
+    set({ activeView: view });
+  },
+
   setToolMode: (mode) => set({
     toolMode: mode,
     stampMode: mode?.type === 'stamp' ? mode.kind : null,
+    customStampId: null,
   }),
 
   setStampMode: (mode) => set({
     stampMode: mode,
     toolMode: mode ? { type: 'stamp', kind: mode } : null,
+    customStampId: null,
+  }),
+
+  setCustomStampId: (id) => set({
+    customStampId: id,
+    stampMode: null,
+    toolMode: null,
   }),
 
   setSelection: (nodeIds, edgeIds) => {

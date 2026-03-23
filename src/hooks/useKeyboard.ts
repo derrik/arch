@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useStore } from '@/store';
 import { NODE_TYPE_REGISTRY } from '@/types/node-types';
+import { openWelcomeModal } from '@/components/modals/WelcomeModal';
 
 export function useKeyboard() {
   useEffect(() => {
@@ -24,13 +25,21 @@ export function useKeyboard() {
 
       // Escape: exit tool mode or clear selection
       if (e.key === 'Escape') {
-        if (state.toolMode) {
+        if (state.customStampId) {
+          state.setCustomStampId(null);
+        } else if (state.toolMode) {
           state.setToolMode(null);
         } else if (state.stampMode) {
           state.setStampMode(null);
         } else {
           state.clearSelection();
         }
+        return;
+      }
+
+      // ? key: open help/welcome modal
+      if (e.key === '?') {
+        openWelcomeModal();
         return;
       }
 

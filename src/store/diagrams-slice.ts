@@ -3,6 +3,7 @@ import { Diagram } from '@/types/graph';
 import { createId } from '@/lib/id';
 import { DEFAULT_DIAGRAM_NAME } from '@/lib/constants';
 import { getAllDiagrams, saveDiagram, deleteDiagram as dbDeleteDiagram } from '@/persistence/db';
+import { DEFAULT_DIAGRAM } from '@/lib/default-diagram';
 import type { GraphSlice } from './graph-slice';
 
 export interface DiagramsSlice {
@@ -41,8 +42,17 @@ export const createDiagramsSlice: StateCreator<
   loadDiagrams: async () => {
     const diagrams = await getAllDiagrams();
     if (diagrams.length === 0) {
-      const diagram = await get().createDiagram();
-      set({ diagramsLoaded: true });
+      // First visit — create a showcase diagram
+      const now = Date.now();
+      const diagram: Diagram = {
+        id: createId(),
+        name: 'Example Platform',
+        graph: DEFAULT_DIAGRAM,
+        createdAt: now,
+        updatedAt: now,
+      };
+      await saveDiagram(diagram);
+      set({ diagrams: [diagram], diagramsLoaded: true });
       get().switchDiagram(diagram.id);
       return;
     }

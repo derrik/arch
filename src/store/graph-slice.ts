@@ -11,7 +11,7 @@ export interface GraphSlice {
   groups: ArchGroup[];
   notes: ArchNote[];
   viewport: ArchViewport;
-  addNode: (kind: NodeKind, x: number, y: number) => ArchNode;
+  addNode: (kind: NodeKind, x: number, y: number, customIconId?: string | null) => ArchNode;
   updateNode: (id: string, updates: Partial<Pick<ArchNode, 'label' | 'x' | 'y'>>) => void;
   removeNodes: (ids: string[]) => void;
   addEdge: (source: string, target: string, sourceHandle?: string | null, targetHandle?: string | null) => ArchEdge | null;
@@ -29,7 +29,7 @@ export interface GraphSlice {
   setViewport: (viewport: ArchViewport) => void;
   loadGraph: (graph: ArchGraph) => void;
   clearGraph: () => void;
-  importJSON: (json: string) => boolean;
+  importJSON: (json: string) => string | null;
 }
 
 export const createGraphSlice: StateCreator<GraphSlice, [], [], GraphSlice> = (set, get) => ({
@@ -39,13 +39,16 @@ export const createGraphSlice: StateCreator<GraphSlice, [], [], GraphSlice> = (s
   notes: [],
   viewport: { x: 0, y: 0, zoom: 1 },
 
-  addNode: (kind, x, y) => {
+  addNode: (kind, x, y, customIconId = null) => {
     const node: ArchNode = {
       id: createId(),
       kind,
-      label: DEFAULT_LABELS[kind],
+      label: customIconId
+        ? customIconId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+        : DEFAULT_LABELS[kind],
       x,
       y,
+      customIconId,
     };
     set(state => ({ nodes: [...state.nodes, node] }));
     return node;
@@ -200,6 +203,7 @@ export const createGraphSlice: StateCreator<GraphSlice, [], [], GraphSlice> = (s
   importJSON: (json) => {
     try {
       const data = JSON.parse(json);
+      const diagramName: string | null = typeof data.name === 'string' && data.name.trim() ? data.name.trim() : null;
       const nodeKinds = new Set(Object.values(NodeKind));
 
       // Map LLM-friendly types to NodeKind
@@ -295,9 +299,9 @@ export const createGraphSlice: StateCreator<GraphSlice, [], [], GraphSlice> = (s
         notes,
         viewport: { x: 0, y: 0, zoom: 1 },
       });
-      return true;
+      return diagramName ?? '';
     } catch {
-      return false;
+      return null;
     }
   },
 });

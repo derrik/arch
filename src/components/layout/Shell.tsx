@@ -9,11 +9,16 @@ import { CanvasAdapter } from '@/canvas/CanvasAdapter';
 import { ShareModal } from '@/components/modals/ShareModal';
 import { DeleteConfirm } from '@/components/modals/DeleteConfirm';
 import { ImportModal } from '@/components/modals/ImportModal';
+import { WelcomeModal, WelcomeModalListener } from '@/components/modals/WelcomeModal';
+import { AIPromptModal } from '@/components/modals/AIPromptModal';
+import { IconStudioView } from '@/components/icon-studio/IconStudioView';
 import { useKeyboard } from '@/hooks/useKeyboard';
 import { getConnected } from '@/lib/graph-utils';
 
 export function Shell() {
   useKeyboard();
+
+  const activeView = useStore((s) => s.activeView);
 
   const nodes = useStore((s) => s.nodes);
   const edges = useStore((s) => s.edges);
@@ -41,6 +46,7 @@ export function Shell() {
   const setHighlightedNodeIds = useStore((s) => s.setHighlightedNodeIds);
   const setIsConnecting = useStore((s) => s.setIsConnecting);
 
+  const customStampId = useStore((s) => s.customStampId);
   const addGroup = useStore((s) => s.addGroup);
   const updateGroup = useStore((s) => s.updateGroup);
   const addNote = useStore((s) => s.addNote);
@@ -61,9 +67,9 @@ export function Shell() {
 
   const handleAddNode = useCallback(
     (kind: Parameters<typeof addNode>[0], x: number, y: number) => {
-      addNode(kind, x, y);
+      addNode(kind, x, y, customStampId);
     },
-    [addNode]
+    [addNode, customStampId]
   );
 
   const handleConnect = useCallback(
@@ -136,65 +142,78 @@ export function Shell() {
     [addGroup, addNote]
   );
 
+  const isDesign = activeView === 'design';
+
   return (
     <ReactFlowProvider>
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: '220px 1fr 64px',
+          gridTemplateColumns: isDesign ? '220px 1fr 64px' : '220px 1fr',
           gridTemplateRows: '1fr',
           height: '100%',
           width: '100%',
         }}
       >
         <Sidebar />
-        <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-          <Toolbar />
-          <div style={{ flex: 1, position: 'relative' }}>
-            <CanvasAdapter
-              nodes={nodes}
-              edges={edges}
-              groups={groups}
-              notes={notes}
-              viewport={viewport}
-              selectedNodeIds={selectedNodeIds}
-              selectedEdgeIds={selectedEdgeIds}
-              highlightedNodeIds={highlightedNodeIds}
-              toolMode={toolMode}
-              stampMode={stampMode}
-              isConnecting={isConnecting}
-              onNodeMove={handleNodeMove}
-              onNodeLabelChange={handleNodeLabelChange}
-              onAddNode={handleAddNode}
-              onConnect={handleConnect}
-              onReconnect={handleReconnect}
-              onEdgeClick={(id) => {
-                if (selectedEdgeIds.includes(id)) {
-                  toggleEdgeAsync(id);
-                } else {
-                  setSelection([], [id]);
-                }
-              }}
-              onEdgeDoubleClick={toggleEdgeAsync}
-              onEdgeLabelChange={updateEdgeLabel}
-              onSelectionChange={handleSelectionChange}
-              onViewportChange={setViewport}
-              onConnectStart={() => setIsConnecting(true)}
-              onConnectEnd={() => setIsConnecting(false)}
-              onDeleteSelected={handleDeleteSelected}
-              onGroupMove={handleGroupMove}
-              onGroupLabelChange={handleGroupLabelChange}
-              onGroupResize={handleGroupResize}
-              onNoteMoveOrUpdate={handleNoteMoveOrUpdate}
-              onPaneClickWithTool={handlePaneClickWithTool}
-            />
-          </div>
-        </div>
-        <RightPanel />
+
+        {isDesign ? (
+          <>
+            <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+              <Toolbar />
+              <div style={{ flex: 1, position: 'relative' }}>
+                <CanvasAdapter
+                  nodes={nodes}
+                  edges={edges}
+                  groups={groups}
+                  notes={notes}
+                  viewport={viewport}
+                  selectedNodeIds={selectedNodeIds}
+                  selectedEdgeIds={selectedEdgeIds}
+                  highlightedNodeIds={highlightedNodeIds}
+                  toolMode={toolMode}
+                  stampMode={stampMode}
+                  isConnecting={isConnecting}
+                  customStampId={customStampId}
+                  onNodeMove={handleNodeMove}
+                  onNodeLabelChange={handleNodeLabelChange}
+                  onAddNode={handleAddNode}
+                  onConnect={handleConnect}
+                  onReconnect={handleReconnect}
+                  onEdgeClick={(id) => {
+                    if (selectedEdgeIds.includes(id)) {
+                      toggleEdgeAsync(id);
+                    } else {
+                      setSelection([], [id]);
+                    }
+                  }}
+                  onEdgeDoubleClick={toggleEdgeAsync}
+                  onEdgeLabelChange={updateEdgeLabel}
+                  onSelectionChange={handleSelectionChange}
+                  onViewportChange={setViewport}
+                  onConnectStart={() => setIsConnecting(true)}
+                  onConnectEnd={() => setIsConnecting(false)}
+                  onDeleteSelected={handleDeleteSelected}
+                  onGroupMove={handleGroupMove}
+                  onGroupLabelChange={handleGroupLabelChange}
+                  onGroupResize={handleGroupResize}
+                  onNoteMoveOrUpdate={handleNoteMoveOrUpdate}
+                  onPaneClickWithTool={handlePaneClickWithTool}
+                />
+              </div>
+            </div>
+            <RightPanel />
+          </>
+        ) : (
+          <IconStudioView />
+        )}
       </div>
       <ShareModal />
       <DeleteConfirm />
       <ImportModal />
+      <AIPromptModal />
+      <WelcomeModal />
+      <WelcomeModalListener />
     </ReactFlowProvider>
   );
 }

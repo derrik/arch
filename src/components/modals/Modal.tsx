@@ -49,7 +49,9 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
               borderRadius: 12,
               padding: 24,
               minWidth: 400,
-              maxWidth: 560,
+              maxWidth: 640,
+              maxHeight: '85vh',
+              overflowY: 'auto',
               width: '90vw',
               boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
             }}

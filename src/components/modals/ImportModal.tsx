@@ -6,25 +6,51 @@ export function ImportModal() {
   const activeModal = useStore((s) => s.activeModal);
   const closeModal = useStore((s) => s.closeModal);
   const importJSON = useStore((s) => s.importJSON);
+  const createDiagram = useStore((s) => s.createDiagram);
+  const switchDiagram = useStore((s) => s.switchDiagram);
+  const saveCurrentDiagram = useStore((s) => s.saveCurrentDiagram);
   const [value, setValue] = useState('');
   const [error, setError] = useState('');
 
   const open = activeModal === 'import';
 
-  const handleImport = useCallback(() => {
+  const handleImport = useCallback(async () => {
     setError('');
     if (!value.trim()) {
       setError('Paste JSON to import');
       return;
     }
-    const success = importJSON(value);
-    if (success) {
+
+    // Validate JSON first without applying it
+    let parsed: any;
+    try {
+      parsed = JSON.parse(value);
+      if (!parsed.nodes && !parsed.components) {
+        setError('Invalid JSON format. Expected { nodes: [...], edges: [...] }');
+        return;
+      }
+    } catch {
+      setError('Invalid JSON format. Expected { nodes: [...], edges: [...] }');
+      return;
+    }
+
+    // Save current work, create new diagram, switch to it
+    await saveCurrentDiagram();
+    const name = (typeof parsed.name === 'string' && parsed.name.trim()) ? parsed.name.trim() : 'Imported Diagram';
+    const diagram = await createDiagram(name);
+    switchDiagram(diagram.id);
+
+    // Now import the JSON into the new (empty) diagram
+    const result = importJSON(value);
+    if (result !== null) {
+      // Save the imported content into the new diagram
+      await saveCurrentDiagram();
       setValue('');
       closeModal();
     } else {
-      setError('Invalid JSON format. Expected { nodes: [...], edges: [...] }');
+      setError('Failed to parse diagram data');
     }
-  }, [value, importJSON, closeModal]);
+  }, [value, importJSON, createDiagram, switchDiagram, saveCurrentDiagram, closeModal]);
 
   return (
     <Modal
@@ -37,38 +63,25 @@ export function ImportModal() {
       title="Import JSON"
     >
       <p style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 12 }}>
-        Paste a JSON diagram or LLM-generated output. Supports <code style={{
+        Paste a JSON diagram or LLM-generated output. A new diagram will be created automatically.
+        Include a <code style={{
           background: 'var(--bg-elevated)',
           padding: '1px 4px',
           borderRadius: 3,
           fontSize: 12,
-        }}>nodes</code>, <code style={{
-          background: 'var(--bg-elevated)',
-          padding: '1px 4px',
-          borderRadius: 3,
-          fontSize: 12,
-        }}>edges</code>, <code style={{
-          background: 'var(--bg-elevated)',
-          padding: '1px 4px',
-          borderRadius: 3,
-          fontSize: 12,
-        }}>groups</code>, and <code style={{
-          background: 'var(--bg-elevated)',
-          padding: '1px 4px',
-          borderRadius: 3,
-          fontSize: 12,
-        }}>notes</code>.
+        }}>"name"</code> field to set the diagram title.
       </p>
       <textarea
         value={value}
         onChange={(e) => { setValue(e.target.value); setError(''); }}
         placeholder={`{
+  "name": "My Architecture",
   "nodes": [
-    { "id": "api", "name": "API Service", "type": "service" },
-    { "id": "db", "name": "PostgreSQL", "type": "database" }
+    { "id": "api", "type": "service", "label": "API Service", "x": 100, "y": 200 },
+    { "id": "db", "type": "database", "label": "PostgreSQL", "x": 350, "y": 200 }
   ],
   "edges": [
-    { "from": "api", "to": "db", "label": "SQL" }
+    { "source": "api", "target": "db", "label": "SQL" }
   ]
 }`}
         style={{

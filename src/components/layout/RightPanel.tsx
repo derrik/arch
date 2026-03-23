@@ -2,6 +2,7 @@ import { useCallback, type ReactNode } from 'react';
 import { useStore } from '@/store';
 import { useTheme } from '@/hooks/useTheme';
 import { IconButton } from '@/components/shared/IconButton';
+import { openWelcomeModal } from '@/components/modals/WelcomeModal';
 
 export function RightPanel() {
   const toolMode = useStore((s) => s.toolMode);
@@ -104,6 +105,14 @@ export function RightPanel() {
         </svg>
       </LabeledButton>
 
+      <LabeledButton label="AI" onClick={() => openModal('ai-prompt')} title="AI diagram prompt">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M12 2l1.09 3.26L16 6l-2.91.74L12 10l-1.09-3.26L8 6l2.91-.74L12 2z" />
+          <path d="M18 10l.6 1.8L20.4 12.4l-1.8.6L18 14.8l-.6-1.8-1.8-.6 1.8-.6L18 10z" />
+          <path d="M7 14l.8 2.4L10.2 17.2l-2.4.8L7 20.4l-.8-2.4-2.4-.8 2.4-.8L7 14z" />
+        </svg>
+      </LabeledButton>
+
       <LabeledButton label="Fullscreen" onClick={handleFullscreen} title="Toggle fullscreen">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3" />
@@ -134,6 +143,14 @@ export function RightPanel() {
             <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
           </svg>
         )}
+      </LabeledButton>
+
+      <LabeledButton label="Help" onClick={openWelcomeModal} title="About Arch (?)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
+        </svg>
       </LabeledButton>
     </div>
   );

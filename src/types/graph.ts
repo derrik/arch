@@ -7,6 +7,7 @@ export interface ArchNode {
   x: number;
   y: number;
   parentId?: string | null;
+  customIconId?: string | null;
 }
 
 export interface ArchEdge {

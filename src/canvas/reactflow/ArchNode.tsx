@@ -2,13 +2,24 @@ import { memo, useState, useCallback, useRef, useEffect } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { NodeKind } from '@/types/node-types';
 import { ICON_REGISTRY } from '@/icons';
+import { getLibraryIconMap } from '@/icons/custom';
 
 export interface ArchNodeData {
   kind: NodeKind;
   label: string;
   highlighted: boolean;
+  customIconId?: string | null;
   onLabelChange: (id: string, label: string) => void;
   [key: string]: unknown;
+}
+
+const libraryIcons = getLibraryIconMap();
+
+function sanitizeSvg(raw: string): string {
+  return raw
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/on\w+="[^"]*"/gi, '')
+    .replace(/on\w+='[^']*'/gi, '');
 }
 
 export const ArchNodeComponent = memo(function ArchNodeComponent({
@@ -37,7 +48,8 @@ export const ArchNodeComponent = memo(function ArchNodeComponent({
     }
   }, [editValue, data.label, data.onLabelChange, id]);
 
-  const Icon = ICON_REGISTRY[data.kind];
+  const customSvg = data.customIconId ? libraryIcons.get(data.customIconId) : null;
+  const Icon = customSvg ? null : ICON_REGISTRY[data.kind];
   const isHighlighted = data.highlighted;
 
   let borderColor = 'var(--node-border)';
@@ -77,8 +89,12 @@ export const ArchNodeComponent = memo(function ArchNodeComponent({
       <Handle type="source" position={Position.Bottom} id="bottom" />
       <Handle type="source" position={Position.Left} id="left" />
 
-      <div style={{ color: 'var(--accent-purple)', flexShrink: 0 }}>
-        <Icon size={20} />
+      <div style={{ color: 'var(--accent-purple)', flexShrink: 0, width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {customSvg ? (
+          <div dangerouslySetInnerHTML={{ __html: sanitizeSvg(customSvg) }} style={{ width: 20, height: 20 }} />
+        ) : Icon ? (
+          <Icon size={20} />
+        ) : null}
       </div>
 
       {editing ? (

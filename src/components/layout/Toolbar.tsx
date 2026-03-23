@@ -1,6 +1,7 @@
 import { useStore } from '@/store';
 import { NODE_TYPE_REGISTRY } from '@/types/node-types';
 import { NodeTypeButton } from '@/components/toolbar/NodeTypeButton';
+import { LibraryPopover } from '@/components/toolbar/LibraryPopover';
 import { useRef, useState, useEffect } from 'react';
 
 export function Toolbar() {
@@ -52,6 +53,8 @@ export function Toolbar() {
             }
           />
         ))}
+        <div style={{ width: 1, height: 24, background: 'var(--border-default)', margin: '0 4px' }} />
+        <LibraryPopover />
       </div>
 
       {/* Save indicator */}

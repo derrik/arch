@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- description: Three rounded rectangles arranged in an L-shape with connecting lines, representing a message broker routing messages from a source to multiple destinations -->
+  <rect x="2" y="4" width="8" height="6" rx="1"/>
+  <rect x="14" y="4" width="8" height="6" rx="1"/>
+  <rect x="14" y="14" width="8" height="6" rx="1"/>
+  <path d="M10 7h4"/>
+  <path d="M10 7l4 10"/>
+</svg>
