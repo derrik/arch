@@ -6,3 +6,4 @@ dist
 .env.*
 *.tsbuildinfo
 deploy.sh
+.claude/settings.local.json 
