@@ -3,6 +3,7 @@ import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { NodeKind } from '@/types/node-types';
 import { ICON_REGISTRY } from '@/icons';
 import { getLibraryIconMap } from '@/icons/custom';
+import { sanitizeSvg } from '@/lib/sanitize';
 
 export interface ArchNodeData {
   kind: NodeKind;
@@ -14,13 +15,6 @@ export interface ArchNodeData {
 }
 
 const libraryIcons = getLibraryIconMap();
-
-function sanitizeSvg(raw: string): string {
-  return raw
-    .replace(/<script[\s\S]*?<\/script>/gi, '')
-    .replace(/on\w+="[^"]*"/gi, '')
-    .replace(/on\w+='[^']*'/gi, '');
-}
 
 export const ArchNodeComponent = memo(function ArchNodeComponent({
   id,

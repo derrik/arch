@@ -1,16 +1,10 @@
 import type { IconMeta } from '@/types/icon';
+import { sanitizeSvg } from '@/lib/sanitize';
 
 interface IconCardProps {
   icon: IconMeta;
   selected: boolean;
   onSelect: () => void;
-}
-
-function sanitizeSvg(raw: string): string {
-  return raw
-    .replace(/<script[\s\S]*?<\/script>/gi, '')
-    .replace(/on\w+="[^"]*"/gi, '')
-    .replace(/on\w+='[^']*'/gi, '');
 }
 
 export function IconCard({ icon, selected, onSelect }: IconCardProps) {

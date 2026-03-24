@@ -1,12 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useStore } from '@/store';
-
-function sanitizeSvg(raw: string): string {
-  return raw
-    .replace(/<script[\s\S]*?<\/script>/gi, '')
-    .replace(/on\w+="[^"]*"/gi, '')
-    .replace(/on\w+='[^']*'/gi, '');
-}
+import { sanitizeSvg } from '@/lib/sanitize';
 
 export function LibraryPopover() {
   const [open, setOpen] = useState(false);

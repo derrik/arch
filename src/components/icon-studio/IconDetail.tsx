@@ -1,15 +1,9 @@
 import { useState } from 'react';
 import type { IconMeta } from '@/types/icon';
+import { sanitizeSvg } from '@/lib/sanitize';
 
 interface IconDetailProps {
   icon: IconMeta;
-}
-
-function sanitizeSvg(raw: string): string {
-  return raw
-    .replace(/<script[\s\S]*?<\/script>/gi, '')
-    .replace(/on\w+="[^"]*"/gi, '')
-    .replace(/on\w+='[^']*'/gi, '');
 }
 
 export function IconDetail({ icon }: IconDetailProps) {
