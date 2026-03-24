@@ -47,6 +47,8 @@ export function Shell() {
   const setIsConnecting = useStore((s) => s.setIsConnecting);
 
   const customStampId = useStore((s) => s.customStampId);
+  const startDrag = useStore((s) => s.startDrag);
+  const endDrag = useStore((s) => s.endDrag);
   const addGroup = useStore((s) => s.addGroup);
   const updateGroup = useStore((s) => s.updateGroup);
   const addNote = useStore((s) => s.addNote);
@@ -199,6 +201,8 @@ export function Shell() {
                   onGroupResize={handleGroupResize}
                   onNoteMoveOrUpdate={handleNoteMoveOrUpdate}
                   onPaneClickWithTool={handlePaneClickWithTool}
+                  onDragStart={startDrag}
+                  onDragEnd={endDrag}
                 />
               </div>
             </div>

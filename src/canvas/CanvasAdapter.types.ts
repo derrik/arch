@@ -33,4 +33,6 @@ export interface CanvasAdapterProps {
   onGroupResize: (id: string, width: number, height: number) => void;
   onNoteMoveOrUpdate: (id: string, updates: Partial<Pick<ArchNote, 'text' | 'x' | 'y'>>) => void;
   onPaneClickWithTool: (tool: NonNullable<ToolMode>, x: number, y: number) => void;
+  onDragStart: () => void;
+  onDragEnd: () => void;
 }

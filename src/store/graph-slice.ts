@@ -32,7 +32,15 @@ export interface GraphSlice {
   importJSON: (json: string) => string | null;
 }
 
-export const createGraphSlice: StateCreator<GraphSlice, [], [], GraphSlice> = (set, get) => ({
+export const createGraphSlice: StateCreator<GraphSlice, [], [], GraphSlice> = (set, get) => {
+  // Helper to push history before mutations. Accesses pushHistory from the
+  // combined store via get() — safe because slices share the same store.
+  const snap = () => {
+    const store = get() as unknown as { pushHistory?: () => void };
+    store.pushHistory?.();
+  };
+
+  return {
   nodes: [],
   edges: [],
   groups: [],
@@ -40,6 +48,7 @@ export const createGraphSlice: StateCreator<GraphSlice, [], [], GraphSlice> = (s
   viewport: { x: 0, y: 0, zoom: 1 },
 
   addNode: (kind, x, y, customIconId = null) => {
+    snap();
     const node: ArchNode = {
       id: createId(),
       kind,
@@ -55,12 +64,14 @@ export const createGraphSlice: StateCreator<GraphSlice, [], [], GraphSlice> = (s
   },
 
   updateNode: (id, updates) => {
+    snap();
     set(state => ({
       nodes: state.nodes.map(n => (n.id === id ? { ...n, ...updates } : n)),
     }));
   },
 
   removeNodes: (ids) => {
+    snap();
     const idSet = new Set(ids);
     set(state => ({
       nodes: state.nodes.filter(n => !idSet.has(n.id)),
@@ -75,6 +86,7 @@ export const createGraphSlice: StateCreator<GraphSlice, [], [], GraphSlice> = (s
     if (source === target) return null;
     const existing = get().edges.find(e => e.source === source && e.target === target);
     if (existing) return null;
+    snap();
 
     if (!sourceHandle || !targetHandle) {
       const nodes = get().nodes;
@@ -102,6 +114,7 @@ export const createGraphSlice: StateCreator<GraphSlice, [], [], GraphSlice> = (s
 
   updateEdge: (id, newSource, newTarget, newSourceHandle = null, newTargetHandle = null) => {
     if (newSource === newTarget) return;
+    snap();
     set(state => ({
       edges: state.edges.map(e =>
         e.id === id ? { ...e, source: newSource, target: newTarget, sourceHandle: newSourceHandle, targetHandle: newTargetHandle } : e
@@ -110,18 +123,21 @@ export const createGraphSlice: StateCreator<GraphSlice, [], [], GraphSlice> = (s
   },
 
   updateEdgeLabel: (id, label) => {
+    snap();
     set(state => ({
       edges: state.edges.map(e => (e.id === id ? { ...e, label } : e)),
     }));
   },
 
   toggleEdgeAsync: (id) => {
+    snap();
     set(state => ({
       edges: state.edges.map(e => (e.id === id ? { ...e, async: !e.async } : e)),
     }));
   },
 
   removeEdges: (ids) => {
+    snap();
     const idSet = new Set(ids);
     set(state => ({
       edges: state.edges.filter(e => !idSet.has(e.id)),
@@ -130,18 +146,21 @@ export const createGraphSlice: StateCreator<GraphSlice, [], [], GraphSlice> = (s
 
   // Groups
   addGroup: (label, x, y, width = 300, height = 200) => {
+    snap();
     const group: ArchGroup = { id: createId(), label, x, y, width, height };
     set(state => ({ groups: [...state.groups, group] }));
     return group;
   },
 
   updateGroup: (id, updates) => {
+    snap();
     set(state => ({
       groups: state.groups.map(g => (g.id === id ? { ...g, ...updates } : g)),
     }));
   },
 
   removeGroups: (ids) => {
+    snap();
     const idSet = new Set(ids);
     set(state => ({
       groups: state.groups.filter(g => !idSet.has(g.id)),
@@ -153,18 +172,21 @@ export const createGraphSlice: StateCreator<GraphSlice, [], [], GraphSlice> = (s
 
   // Notes
   addNote: (text, x, y, attachedTo = null) => {
+    snap();
     const note: ArchNote = { id: createId(), text, x, y, attachedTo };
     set(state => ({ notes: [...state.notes, note] }));
     return note;
   },
 
   updateNote: (id, updates) => {
+    snap();
     set(state => ({
       notes: state.notes.map(n => (n.id === id ? { ...n, ...updates } : n)),
     }));
   },
 
   removeNotes: (ids) => {
+    snap();
     const idSet = new Set(ids);
     set(state => ({
       notes: state.notes.filter(n => !idSet.has(n.id)),
@@ -195,13 +217,14 @@ export const createGraphSlice: StateCreator<GraphSlice, [], [], GraphSlice> = (s
     viewport: graph.viewport ?? { x: 0, y: 0, zoom: 1 },
   }),
 
-  clearGraph: () => set({
+  clearGraph: () => { snap(); set({
     nodes: [], edges: [], groups: [], notes: [],
     viewport: { x: 0, y: 0, zoom: 1 },
-  }),
+  }); },
 
   importJSON: (json) => {
     try {
+      snap();
       const data = JSON.parse(json);
       const diagramName: string | null = typeof data.name === 'string' && data.name.trim() ? data.name.trim() : null;
       const nodeKinds = new Set(Object.values(NodeKind));
@@ -304,4 +327,5 @@ export const createGraphSlice: StateCreator<GraphSlice, [], [], GraphSlice> = (s
       return null;
     }
   },
-});
+}; // end return
+}; // end createGraphSlice

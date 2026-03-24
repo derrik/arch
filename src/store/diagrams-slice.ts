@@ -5,6 +5,7 @@ import { DEFAULT_DIAGRAM_NAME } from '@/lib/constants';
 import { getAllDiagrams, saveDiagram, deleteDiagram as dbDeleteDiagram } from '@/persistence/db';
 import { DEFAULT_DIAGRAM } from '@/lib/default-diagram';
 import type { GraphSlice } from './graph-slice';
+import type { HistorySlice } from './history-slice';
 
 export interface DiagramsSlice {
   diagrams: Diagram[];
@@ -30,7 +31,7 @@ function getCurrentGraph(state: GraphSlice) {
 }
 
 export const createDiagramsSlice: StateCreator<
-  DiagramsSlice & GraphSlice,
+  DiagramsSlice & GraphSlice & HistorySlice,
   [],
   [],
   DiagramsSlice
@@ -95,7 +96,7 @@ export const createDiagramsSlice: StateCreator<
     const target = state.diagrams.find(d => d.id === id);
     if (target) {
       state.loadGraph(target.graph);
-      set({ activeDiagramId: id });
+      set({ activeDiagramId: id, _undoStack: [], _redoStack: [] });
     }
   },
 

@@ -53,6 +53,8 @@ export function ReactFlowCanvas({
   onNoteMoveOrUpdate,
   onPaneClickWithTool,
   customStampId,
+  onDragStart,
+  onDragEnd,
 }: CanvasAdapterProps) {
   const rfRef = useRef<ReactFlowInstance | null>(null);
   const skipNextSelectionRef = useRef(false);
@@ -276,6 +278,8 @@ export function ReactFlowCanvas({
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         onNodesChange={onNodesChange}
+        onNodeDragStart={onDragStart}
+        onNodeDragStop={onDragEnd}
         onConnect={handleConnect}
         onReconnect={handleReconnect}
         edgesReconnectable

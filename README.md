@@ -1,6 +1,6 @@
 # Arch
 
-**Local-first architecture diagram builder with a cyberpunk aesthetic.**
+**Local-first architecture diagram builder.**
 
 [Live Demo](https://randomlevel.com/arch) | No accounts, no servers, no data leaves your browser.
 
@@ -248,7 +248,6 @@ Other v2 additions: welcome modal for deployed site onboarding, overlap cycling 
 
 Some directions this could go:
 
-- **Undo/redo** — Zustand middleware for action history
 - **Export to PNG/SVG** — render the canvas to an image for docs and presentations
 - **Collaborative editing** — CRDTs (Yjs) over WebRTC for real-time multi-user diagramming, still local-first
 - **Diagram diffing** — visual diff between two versions of a diagram, useful for architecture reviews

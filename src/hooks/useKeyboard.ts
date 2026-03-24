@@ -12,6 +12,23 @@ export function useKeyboard() {
 
       const state = useStore.getState();
 
+      // Undo: Cmd+Z (Mac) or Ctrl+Z
+      if (e.key === 'z' && (e.metaKey || e.ctrlKey) && !e.shiftKey) {
+        e.preventDefault();
+        state.undo();
+        return;
+      }
+
+      // Redo: Cmd+Shift+Z (Mac) or Ctrl+Shift+Z, or Ctrl+Y
+      if (
+        (e.key === 'z' && (e.metaKey || e.ctrlKey) && e.shiftKey) ||
+        (e.key === 'y' && e.ctrlKey)
+      ) {
+        e.preventDefault();
+        state.redo();
+        return;
+      }
+
       // Number keys 1-8 for stamp mode
       const num = parseInt(e.key);
       if (num >= 1 && num <= 8) {
